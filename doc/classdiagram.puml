@@ -1,0 +1,57 @@
+@startuml
+abstract Medie {
+String title
+double rating
+Genre ###
+void searchMedie()
+void searchMedieInCategory()
+}
+abstract Movie {
+int durationInMinutes
+}
+abstract Serie {
+ArrayList<Season> seasons
+ArrayList<Episode> episodes
+}
+abstract Season {
+int numberOfEpisodes
+}
+abstract Episode {
+int durationInMinutes
+}
+class Bruger {
+ArrayList<Medie> watchedMedie
+ArrayList<Medie> wishlist
+String username
+String password
+void showWatchedMedie()
+void showWishlist()
+}
+enum Genre {
+CRIME
+FAMILY
+WAR
+DRAMA
+ROMANCE
+}
+class Main
+interface Play {
+void play()
+}
+class FileIO
+class TextUI
+
+
+
+
+
+Serie *-- Season
+Serie *-- Episode
+Bruger *-- Medie
+Season *-- Episode
+Medie *-- Genre
+Genre *-- Movie
+Genre *-- Serie
+Play *-- Movie
+Play *-- Serie
+@enduml

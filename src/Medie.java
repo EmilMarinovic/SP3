@@ -1,2 +1,2 @@
-public class Medie {
+public interface Medie {
 }
