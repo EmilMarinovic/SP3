@@ -1,4 +1,4 @@
-enum Category {
+enum Genre {
     CRIME,
     FAMILY,
     WAR,

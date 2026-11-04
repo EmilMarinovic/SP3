@@ -2,7 +2,7 @@
 abstract Medie {
 String title
 double rating
-ArrayList<Category> categories
+ArrayList<Genre> genres
 void searchMedie()
 void searchMedieInCategory()
 }
@@ -27,7 +27,7 @@ String password
 void showWatchedMedie()
 void showWishlist()
 }
-enum Category {
+enum Genre {
 CRIME
 FAMILY
 WAR
@@ -40,15 +40,19 @@ void play()
 }
 class FileIO
 class TextUI
+class StreamingService {
+void createMovie()
+void createSeries()
+}
 
 
 
 
 
 Medie <|-- Movie
-Medie <|-- Serie
+Medie <|-- Series
 
-Serie *-- Season
+Series *-- Season
 Season *-- Episode
 
 Playable <|.. Movie
