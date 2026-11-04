@@ -2,24 +2,24 @@
 abstract Medie {
 String title
 double rating
-Genre ###
+ArrayList<Category> categories
 void searchMedie()
 void searchMedieInCategory()
 }
-abstract Movie {
+class Movie {
 int durationInMinutes
 }
-abstract Serie {
+class Series {
 ArrayList<Season> seasons
 ArrayList<Episode> episodes
 }
-abstract Season {
+class Season {
 int numberOfEpisodes
 }
-abstract Episode {
+class Episode {
 int durationInMinutes
 }
-class Bruger {
+class User {
 ArrayList<Medie> watchedMedie
 ArrayList<Medie> wishlist
 String username
@@ -27,7 +27,7 @@ String password
 void showWatchedMedie()
 void showWishlist()
 }
-enum Genre {
+enum Category {
 CRIME
 FAMILY
 WAR
@@ -35,7 +35,7 @@ DRAMA
 ROMANCE
 }
 class Main
-interface Play {
+interface Playable {
 void play()
 }
 class FileIO
@@ -45,13 +45,12 @@ class TextUI
 
 
 
+Medie <|-- Movie
+Medie <|-- Serie
+
 Serie *-- Season
-Serie *-- Episode
-Bruger *-- Medie
 Season *-- Episode
-Medie *-- Genre
-Genre *-- Movie
-Genre *-- Serie
-Play *-- Movie
-Play *-- Serie
+
+Playable <|.. Movie
+Playable <|.. Episode
 @enduml

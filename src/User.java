@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Bruger {
+public class User {
     private ArrayList<Medie> watchedMedie;
     private ArrayList<Medie> wishlist;
 }
