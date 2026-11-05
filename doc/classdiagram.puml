@@ -57,4 +57,6 @@ Season *-- Episode
 
 Playable <|.. Movie
 Playable <|.. Episode
+
+StreamingService *-- Series
 @enduml
