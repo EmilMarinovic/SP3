@@ -4,7 +4,9 @@ import java.util.Scanner;
 public class StreamingService {
     private ArrayList<Series> series = new ArrayList<>();
     private ArrayList<Movie> movies = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
     FileIO io = new FileIO();
+    TextUI ui = new TextUI();
 
     Scanner scan = new Scanner(System.in);
 
@@ -93,67 +95,111 @@ public class StreamingService {
         movies.add(new Movie(title, year, genres, rating));
     }
 
-    public void createUserData(String title, String password);
+    public void createUserData(String title, String password) {}
 
-    public void createStartMenu(){
-        System.out.println("===MENU===");
-        System.out.println();
-        System.out.println("Vælg mulighed: ");
-        System.out.println("1) Opret bruger ");
-        System.out.println("2) Log ind");
-        System.out.println("3) Afslut");
+    public void showStartMenu(){
+        boolean isRunning = true;
+        while (isRunning) {
+            ui.displayMessage("===MENU===");
+            ui.displayMessage("\n1. Create user");
+            ui.displayMessage("2. Log in");
+            ui.displayMessage("0. Close");
 
-        int valgStart = scan.nextInt();
+            int input = ui.promptNumeric("Choose:");
 
-        switch (valgStart){
-            case 1:
-                System.out.println("Opret ny bruger med password");
-                createUser();
-                break;
-            case 2:
-                System.out.println("indtast bruger og password");
-                logIn();
-                break;
-            case 3:
-                System.out.println("Luk menu");
-                scan.close();
-                break;
-            default:
-                System.out.println("ERROR: indtast gyldigt valg");
+            switch (input){
+                case 1:
+                    createUser();
+                    break;
+                case 2:
+                    logIn();
+                    break;
+                case 0:
+                    ui.displayMessage("Closing...");
+                    isRunning = false;
+                    break;
+                default:
+                    ui.displayMessage("Please pick a choice");
+                    break;
+            }
         }
     }
 
-    public void createMainMenu(){
-        System.out.println("===MENU===");
-        System.out.println();
-        System.out.println("Vælg mulighed: ");
-        System.out.println("1) Søg efter bestemt film");
-        System.out.println("2) Søg alle film i en kategori");
-        System.out.println("3) Se liste over sete film");
-        System.out.println("4) Se liste over gemte film");
-        System.out.println("5) afslut");
+    public void createUser(){
+        String username = ui.promptText("Type username:");
+        String password = ui.promptText("Type password:");
+        users.add(new User(username, password));
+        ui.displayMessage("\nUser created\n");
 
-        int valgMain = scan.nextInt();
+        //Vi skal have en håndtering for at man ikke kan oprette en user med et username der allerede findes
+    }
 
-        switch(valgMain){
-            case 1:
-                System.out.println("Indtast navn på film");
+    public void logIn() {
+        boolean isRunning = true;
+        while (isRunning) {
+            String username = ui.promptText("Type username");
+
+            User user = findUser(username);
+
+            if (user == null) {
+                ui.displayMessage("User does not exist!");
                 break;
-            case 2:
-                System.out.println("indtast navn på film i kategori");
-                break;
-            case 3:
-                System.out.println("Liste over sete film: ");
-                break;
-            case 4:
-                System.out.println("liste over gemte film: ");
-                break;
-            case 5:
-                System.out.println("Luk menu");
-                scan.close();
-            default:
-                System.out.println("ERROR: indtast gyldigt valg");
+            }
+
+            String password = ui.promptText("Type password");
+
+            if (!user.getPassword().equals(password)) {
+                ui.displayMessage("Wrong password!. Try again");
+            } else {
+                ui.displayMessage("You are now logged in");
+                isRunning = false;
+                showOptionMenu();
+            }
         }
+    }
+
+    public void showOptionMenu() {
+        boolean isRunning = true;
+
+        while (isRunning) {
+            ui.displayMessage("\nWelcome back - What do you want to do?");
+            ui.displayMessage("1. Search after a title");
+            ui.displayMessage("2. Search after a genre");
+            ui.displayMessage("3. Show list of watched list");
+            ui.displayMessage("4. Show wishlist");
+            ui.displayMessage("0. Close");
+
+            int input = ui.promptNumeric("Choose:");
+
+            switch (input) {
+                case 1:
+                    //searchAfterTitle();
+                    break;
+                case 2:
+                    //searchAfterGenre();
+                    break;
+                case 3:
+                    //showWatchedList();
+                    break;
+                case 4:
+                    //showWishlist();
+                    break;
+                case 0:
+                    ui.displayMessage("Closing...");
+                    isRunning = false;
+                default:
+                    ui.displayMessage("Please pick a choice");
+            }
+        }
+    }
+
+    private User findUser(String username) {
+        for (User u : users) {
+            if (u.getUsername().equalsIgnoreCase(username)) {
+                return u;
+            }
+        }
+        return null;   // ingen fundet
     }
 
 

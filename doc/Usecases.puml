@@ -1,0 +1,47 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+@startuml
+'https://plantuml.com/sequence-diagram
+
+actor user
+
+package "Streaming Service" {
+
+usecase "Opret bruger" as UC1
+usecase "Log ind" as UC2
+usecase "Søg efter bestemt film" as UC3
+usecase "Søg alle film i kategori" as UC4
+usecase "Se liste over sete film" as UC5
+usecase "Se liste over gemte film" as UC6
+usecase "Vælg film" as UC7
+usecase "Afspil film" as UC8
+usecase "Gem film" as UC9
+usecase "Slet gemt film" as UC10
+usecase "startMenu" as UC12
+usecase "mainMenu" as UC13
+}
+
+
+
+user --> UC12
+UC1 --> UC2
+UC2 --> UC13
+UC3 --> UC7
+UC4 --> UC7
+UC5 --> UC7
+UC6 --> UC7
+UC6 --> UC10
+UC7 --> UC8
+UC7 --> UC9
+UC8 --> UC9
+UC9 --> UC7
+UC9 --> UC13
+UC10 --> UC6
+UC12 --> UC1
+UC12 --> UC2
+UC13 --> UC3
+UC13 --> UC4
+UC13 --> UC5
+UC13 --> UC6
+@enduml
