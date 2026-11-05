@@ -1,7 +1,25 @@
 enum Genre {
+    ACTION,
+    ADVENTURE,
+    ANIMATION,
+    BIOGRAPHY,
+    COMEDY,
     CRIME,
-    FAMILY,
-    WAR,
+    DOCUMENTARY,
     DRAMA,
-    ROMANCE;
+    FAMILY,
+    FANTASY,
+    FILMNOIR,
+    HISTORY,
+    HORROR,
+    MUSIC,
+    MUSICAL,
+    MYSTERY,
+    ROMANCE,
+    SCIFI,
+    SPORT,
+    TALKSHOW,
+    THRILLER,
+    WAR,
+    WESTERN;
 }

@@ -1,13 +1,23 @@
-public class Series {
-    private String title;
-    private String year;
-    private String[] genres;
-    private double rating;
+import java.util.ArrayList;
 
-    public Series(String title, String year, String[] genres, double rating) {
-        this.title = title;
-        this.year = year;
-        this.genres = genres;
-        this.rating = rating;
+public class Series extends Medie {
+    private ArrayList<Season> seasons;
+
+    public Series(String title, String year, ArrayList<Genre> genres, double rating) {
+        super(title, year, genres, rating);
+        this.seasons = new ArrayList<>();
+    }
+
+    public void addSeason(Season season) {
+        seasons.add(season);
+    }
+
+    public ArrayList<Season> getSeasons() {
+        return seasons;
+    }
+
+    @Override
+    public String toString() {
+        return getTitle() + " " + getYear() + " " + getGenres() + " " + getRating() + " " + getSeasons();
     }
 }

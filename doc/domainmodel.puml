@@ -1,0 +1,30 @@
+@startuml
+object StreamingService
+object Series
+object Movie
+object Seasons
+object Episode
+object Medie
+object Genre
+object User
+object Login
+object WatchedMedia
+object Wishlist
+
+
+StreamingService *-- "200"Medie
+StreamingService *-- User
+
+Medie <|-- Series : "is-a"
+Medie <|-- Movie : "is-a"
+Medie *-- "1..3"Genre : "has-a"
+
+Series *-- "1..29"Seasons
+
+Seasons *-- "*"Episode
+
+User *-- Login
+User *-- WatchedMedia
+User *-- Wishlist
+
+@enduml

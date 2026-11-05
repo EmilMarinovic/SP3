@@ -11,7 +11,11 @@ public class FileIO {
             Scanner scan = new Scanner(file);
             scan.nextLine(); //Skip header
             while(scan.hasNextLine()){
-                String s = scan.nextLine(); // "Twin Peaks; 1990-1991; Crime, Drama, Mystery; 8,8; 1-8, 2-22;"
+                String s = scan.nextLine();// "Twin Peaks; 1990-1991; Crime, Drama, Mystery; 8,8; 1-8, 2-22;"
+                String[] values = s.split(";");
+                String username = values[0];
+                String password = values[1];
+                User u = new User(username, password);
                 data.add(s);
             }
         }catch(FileNotFoundException e){
@@ -20,6 +24,16 @@ public class FileIO {
             System.out.println("Der er sket en fejl i indlæsningen af dataen: Index passer ikke");
         }
         return data;
+    }
+
+    public void writeData(String path) {
+        File file = new File(path);
+        try{
+            FileWriter writer = new FileWriter(file);
+
+        }catch (IOException e){
+
+        }
     }
 /*
     public String[] readData(String path, int length) {
