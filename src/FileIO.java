@@ -35,8 +35,8 @@ public class FileIO {
 
         }
     }
-/*
-    public String[] readData(String path, int length) {
+
+    /*public String[] readData(String path, int length) {
 
 
         // start metoden med at initialisere et String[] data med det antal pladser som er angivet i parameterlisten (length)
@@ -58,7 +58,7 @@ public class FileIO {
 
 
         return data;
-    }
+    }*/
 
     public void saveData(ArrayList<String> data, String path, String header){
         File file = new File(path);
@@ -73,11 +73,8 @@ public class FileIO {
 
             System.out.println("filen blev ikke fundet");
         }
-
-
-
     }
-*/
+
 
 
 

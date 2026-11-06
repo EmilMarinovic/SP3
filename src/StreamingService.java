@@ -165,6 +165,7 @@ public class StreamingService {
                     break;
                 case 0:
                     ui.displayMessage("Closing...");
+                    endSession();
                     isRunning = false;
                     break;
                 default:
@@ -217,7 +218,7 @@ public class StreamingService {
             ui.displayMessage("2. Search after a genre");
             ui.displayMessage("3. Show list of watched list");
             ui.displayMessage("4. Show wishlist");
-            ui.displayMessage("0. Close");
+            ui.displayMessage("0. Log out");
 
             int input = ui.promptNumeric("Choose:");
 
@@ -235,7 +236,7 @@ public class StreamingService {
                     currentUser.showWishlist();
                     break;
                 case 0:
-                    ui.displayMessage("Closing...");
+                    ui.displayMessage("Logging out");
                     isRunning = false;
                     break;
                 default:
@@ -271,7 +272,13 @@ public class StreamingService {
 
     }
 
-    public void searchMedieInCategory(){
-
+    public void endSession() {
+        ArrayList<String> data = new ArrayList<>();
+        String path = "data/userdata.csv";
+        String header = "Username; Password; Watchedlist; Wishlist;";
+        for (User u : users) {
+            data.add(u.getUsername() + "; " + u.getPassword() + "; " + u.getWatchedMedieFormatted() + "; " + u.getWishlistFormatted() + ";");
+        }
+        io.saveData(data, path, header);
     }
 }
