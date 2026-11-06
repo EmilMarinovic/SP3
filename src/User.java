@@ -25,8 +25,16 @@ public class User {
             System.out.println("The list is empty...");
         }
         for (Medie m : watchedMedie) {
-            System.out.println(m.getTitle() + " -- Release year: " + m.getYear() + " -- Genres: " +
+            if (m instanceof Series) {
+                System.out.print("Series: ");
+            } else {
+                System.out.print("Movie: ");
+            }
+            System.out.print(m.getTitle() + " -- Release year: " + m.getYear() + " -- Genres: " +
                     m.getGenresFormatted() + " -- Rating: " + m.getRating());
+            if (m instanceof Series s) {
+                System.out.println(" -- Seasons: " + s.getSeasons().size());
+            } else System.out.println();
         }
     }
 
@@ -35,8 +43,16 @@ public class User {
             System.out.println("The list is empty...");
         }
         for (Medie m : wishlist) {
-            System.out.println(m.getTitle() + " -- Release year: " + m.getYear() + " -- Genres: " +
+            if (m instanceof Series) {
+                System.out.print("Series: ");
+            } else {
+                System.out.print("Movie: ");
+            }
+            System.out.print(m.getTitle() + " -- Release year: " + m.getYear() + " -- Genres: " +
                     m.getGenresFormatted() + " -- Rating: " + m.getRating());
+            if (m instanceof Series s) {
+                System.out.println(" -- Seasons: " + s.getSeasons().size());
+            } else System.out.println();
         }
     }
 
@@ -46,10 +62,6 @@ public class User {
 
     public String getPassword() {
         return password;
-    }
-
-    public ArrayList<Medie> getWatchedMedie() {
-        return watchedMedie;
     }
 
     public String getWatchedMedieFormatted() {
@@ -62,10 +74,6 @@ public class User {
             }
         }
         return sb.toString();
-    }
-
-    public ArrayList<Medie> getWishlist() {
-        return wishlist;
     }
 
     public String getWishlistFormatted() {
