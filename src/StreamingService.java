@@ -214,4 +214,12 @@ public class StreamingService {
             System.out.println(m.toString());
         }
     }
+
+    public void searchMedie(){
+
+    }
+
+    public void searchMedieInCategory(){
+
+    }
 }

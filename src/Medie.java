@@ -13,16 +13,6 @@ public abstract class Medie {
         this.rating = rating;
     }
 
-
-
-    public void searchMedie(){
-
-    }
-
-    public void searchMedieInCategory(){
-
-    }
-
     //GETTERE/SETTERE:
     public String getTitle() {
         return title;
