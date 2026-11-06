@@ -18,6 +18,6 @@ public class Series extends Medie {
 
     @Override
     public String toString() {
-        return getTitle() + " " + getYear() + " " + getGenres() + " " + getRating() + " " + getSeasons();
+        return getTitle() + " " + getYear() + " " + getGenresFormatted() + " " + getRating() + " " + getSeasons();
     }
 }

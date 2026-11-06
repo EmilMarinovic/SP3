@@ -12,6 +12,6 @@ public class Movie extends Medie implements Playable{
 
     @Override
     public String toString() {
-        return getTitle() + " " + getYear() + " " + getGenres() + " " + getRating();
+        return getTitle() + " " + getYear() + " " + getGenresFormatted() + " " + getRating();
     }
 }

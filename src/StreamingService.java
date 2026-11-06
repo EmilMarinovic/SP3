@@ -2,9 +2,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class StreamingService {
-    private ArrayList<Series> series = new ArrayList<>();
-    private ArrayList<Movie> movies = new ArrayList<>();
+    private ArrayList<Medie> medias = new ArrayList<>();
     private ArrayList<User> users = new ArrayList<>();
+    private User currentUser;
     FileIO io = new FileIO();
     TextUI ui = new TextUI();
 
@@ -83,19 +83,68 @@ public class StreamingService {
         }
     }
 
+    public void loadDataUser() {
+        ArrayList<String> lines = io.readData("data/userdata.csv");
+
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i).trim();
+            if (line.isEmpty()) continue;
+
+            try {
+                String[] data = line.split(";");
+                String username = data[0].trim();
+                String password = data[1].trim();
+
+                ArrayList<Medie> watchedMedie = new ArrayList<>();
+                ArrayList<Medie> wishlist = new ArrayList<>();
+
+                if (data.length > 2) {
+                    for (String g : data[2].split(",")) {
+                        Medie m = findMedieTitle(g.trim());
+                        if (m != null) watchedMedie.add(m);
+                    }
+                }
+
+                if (data.length > 3) {
+                    for (String g : data[3].split(",")) {
+                        Medie m = findMedieTitle(g.trim());
+                        if (m != null) wishlist.add(m);
+                    }
+                }
+
+                createUserData(username, password, watchedMedie, wishlist);
+
+            } catch (Exception e) {
+                System.out.println("Kunne ikke indlæse linje " + (i + 1) + ": [" + line + "]");
+                System.out.println("  Fejl: " + e);
+            }
+        }
+    }
+
+    public Medie findMedieTitle(String title) {
+        for (Medie m : medias) {
+            if (title.trim().equalsIgnoreCase(m.getTitle().trim())) {
+                return m;
+            }
+        }
+        return null;
+    }
+
     public void createSeriesData(String title, String year, ArrayList<Genre> genres, double rating, ArrayList<Season> seasons) {
         Series s = new Series(title, year, genres, rating);
         for (Season season : seasons) {
             s.addSeason(season);
         }
-        series.add(s);
+        medias.add(s);
     }
 
     public void createMovieData(String title, String year, ArrayList<Genre> genres, double rating) {
-        movies.add(new Movie(title, year, genres, rating));
+        medias.add(new Movie(title, year, genres, rating));
     }
 
-    public void createUserData(String title, String password) {}
+    public void createUserData(String username, String password, ArrayList<Medie> watchedMedie, ArrayList<Medie> wishlist) {
+        users.add(new User(username, password, watchedMedie, wishlist));
+    }
 
     public void showStartMenu(){
         boolean isRunning = true;
@@ -152,6 +201,7 @@ public class StreamingService {
                 ui.displayMessage("Wrong password!. Try again");
             } else {
                 ui.displayMessage("You are now logged in");
+                currentUser = user;
                 isRunning = false;
                 showOptionMenu();
             }
@@ -179,16 +229,18 @@ public class StreamingService {
                     //searchAfterGenre();
                     break;
                 case 3:
-                    //showWatchedList();
+                    currentUser.showWatchedMedie();
                     break;
                 case 4:
-                    //showWishlist();
+                    currentUser.showWishlist();
                     break;
                 case 0:
                     ui.displayMessage("Closing...");
                     isRunning = false;
+                    break;
                 default:
                     ui.displayMessage("Please pick a choice");
+                    break;
             }
         }
     }
@@ -203,7 +255,7 @@ public class StreamingService {
     }
 
 
-    public void displayAllSeries() {
+    /*public void displayAllSeries() {
         for (Series s : series) {
             System.out.println(s.toString());
         }
@@ -213,7 +265,7 @@ public class StreamingService {
         for (Movie m : movies) {
             System.out.println(m.toString());
         }
-    }
+    }*/
 
     public void searchMedie(){
 

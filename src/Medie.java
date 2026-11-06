@@ -22,8 +22,16 @@ public abstract class Medie {
         return year;
     }
 
-    public ArrayList<Genre> getGenres() {
-        return genres;
+    public String getGenresFormatted() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < genres.size(); i++) {
+            String name = genres.get(i).name();   // f.eks. "CRIME"
+            sb.append(name.charAt(0)).append(name.substring(1).toLowerCase());
+            if (i < genres.size() - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
     }
 
     public double getRating() {
