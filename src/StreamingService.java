@@ -214,25 +214,21 @@ public class StreamingService {
 
         while (isRunning) {
             ui.displayMessage("\nWelcome back - What do you want to do?");
-            ui.displayMessage("1. Search after a title");
-            ui.displayMessage("2. Search after a genre");
-            ui.displayMessage("3. Show list of watched list");
-            ui.displayMessage("4. Show wishlist");
+            ui.displayMessage("1. Search");
+            ui.displayMessage("2. Show list of watched list");
+            ui.displayMessage("3. Show wishlist");
             ui.displayMessage("0. Log out");
 
             int input = ui.promptNumeric("Choose:");
 
             switch (input) {
                 case 1:
-                    //searchAfterTitle();
+                    searchMedie();
                     break;
                 case 2:
-                    //searchAfterGenre();
-                    break;
-                case 3:
                     currentUser.showWatchedMedie();
                     break;
-                case 4:
+                case 3:
                     currentUser.showWishlist();
                     break;
                 case 0:
@@ -243,6 +239,45 @@ public class StreamingService {
                     ui.displayMessage("Please pick a choice");
                     break;
             }
+        }
+    }
+
+    public void searchMovieByYear() {
+        String year = ui.promptText("Enter year:");
+
+        boolean found = false;
+
+        for (Medie m : medias) {
+            if (m instanceof Movie && m.getYear().equals(year)) {
+                ui.displayMessage(m.toString());
+                found = true;
+            }
+        }
+
+        if (!found) {
+            ui.displayMessage("No movies found from " + year);
+        }
+    }
+
+    public void searchMoviesByYearRange() {
+        int startYear = ui.promptNumeric("Enter start year:");
+        int endYear = ui.promptNumeric("Enter end year:");
+
+        boolean found = false;
+
+        for (Medie m : medias) {
+            if (m instanceof Movie) {
+                int movieYear = Integer.parseInt(m.getYear());
+
+                if (movieYear >= startYear && movieYear <= endYear) {
+                    ui.displayMessage(m.toString());
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) {
+            ui.displayMessage("No movies found in this period.");
         }
     }
 
@@ -268,8 +303,199 @@ public class StreamingService {
         }
     }*/
 
-    public void searchMedie(){
+    public void searchMedie() {
+        ui.displayMessage("\n=== SEARCH ===");
+        ui.displayMessage("1. Movie");
+        ui.displayMessage("2. Series");
+        ui.displayMessage("3. Movie/Series");
 
+        int input = ui.promptNumeric("Choose:");
+
+        String mediaType;
+
+        switch (input) {
+            case 1:
+                mediaType = "Movie";
+                break;
+            case 2:
+                mediaType = "Series";
+                break;
+            case 3:
+                mediaType = "All";
+                break;
+            default:
+                ui.displayMessage("Invalid choice");
+                return;
+        }
+
+        searchByCriteria(mediaType);
+    }
+
+    public void searchByCriteria(String mediaType) {
+        ui.displayMessage("\n=== SEARCH BY ===");
+        ui.displayMessage("1. Rating");
+        ui.displayMessage("2. Release year");
+
+        int input = ui.promptNumeric("Choose:");
+
+        switch (input) {
+            case 1:
+                searchByRating(mediaType);
+                break;
+            case 2:
+                searchByYear(mediaType);
+                break;
+            default:
+                ui.displayMessage("Invalid choice");
+                break;
+        }
+    }
+
+    public void searchByRating(String mediaType) {
+        ui.displayMessage("\n=== RATING ===");
+        ui.displayMessage("1. Rating at/above");
+        ui.displayMessage("2. Rating in range of");
+
+        int input = ui.promptNumeric("Choose:");
+
+        switch (input) {
+            case 1:
+                searchRatingAbove(mediaType);
+                break;
+            case 2:
+                searchRatingRange(mediaType);
+                break;
+            default:
+                ui.displayMessage("Invalid choice");
+                break;
+        }
+    }
+
+    public void searchRatingAbove(String mediaType) {
+        double rating = Double.parseDouble(
+                ui.promptText("Enter minimum rating:").replace(",", ".")
+        );
+
+        boolean found = false;
+
+        for (Medie m : medias) {
+            if (matchesMediaType(m, mediaType)
+                    && m.getRating() >= rating) {
+                ui.displayMessage(m.toString());
+                found = true;
+            }
+        }
+
+        if (!found) {
+            ui.displayMessage("No media found.");
+        }
+    }
+
+    public void searchRatingRange(String mediaType) {
+        double minRating = Double.parseDouble(
+                ui.promptText("Enter minimum rating:").replace(",", ".")
+        );
+
+        double maxRating = Double.parseDouble(
+                ui.promptText("Enter maximum rating:").replace(",", ".")
+        );
+
+        boolean found = false;
+
+        for (Medie m : medias) {
+            if (matchesMediaType(m, mediaType)
+                    && m.getRating() >= minRating
+                    && m.getRating() <= maxRating) {
+                ui.displayMessage(m.toString());
+                found = true;
+            }
+        }
+
+        if (!found) {
+            ui.displayMessage("No media found.");
+        }
+    }
+
+    public void searchByYear(String mediaType) {
+        ui.displayMessage("\n=== RELEASE YEAR ===");
+        ui.displayMessage("1. Release year");
+        ui.displayMessage("2. Release year in range of");
+
+        int input = ui.promptNumeric("Choose:");
+
+        switch (input) {
+            case 1:
+                searchYearExact(mediaType);
+                break;
+            case 2:
+                searchYearRange(mediaType);
+                break;
+            default:
+                ui.displayMessage("Invalid choice");
+                break;
+        }
+    }
+
+    public void searchYearExact(String mediaType) {
+        String year = ui.promptText("Enter release year:");
+
+        boolean found = false;
+
+        for (Medie m : medias) {
+            if (matchesMediaType(m, mediaType)
+                    && m.getYear().equals(year)) {
+                ui.displayMessage(m.toString());
+                found = true;
+            }
+        }
+
+        if (!found) {
+            ui.displayMessage("No media found.");
+        }
+    }
+
+    public void searchYearRange(String mediaType) {
+        int minYear = Integer.parseInt(
+                ui.promptText("Enter starting year:")
+        );
+
+        int maxYear = Integer.parseInt(
+                ui.promptText("Enter ending year:")
+        );
+
+        boolean found = false;
+
+        for (Medie m : medias) {
+            if (matchesMediaType(m, mediaType)) {
+                int year = Integer.parseInt(m.getYear());
+
+                if (year >= minYear && year <= maxYear) {
+                    ui.displayMessage(m.toString());
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) {
+            ui.displayMessage("No media found.");
+        }
+    }
+
+    private boolean matchesMediaType(Medie m, String mediaType) {
+
+        switch (mediaType) {
+            case "Movie":
+                return m instanceof Movie;
+
+            case "Series":
+                return m instanceof Series;
+
+            case "All":
+                return true;
+
+            default:
+                return false;
+        }
     }
 
     public void endSession() {
