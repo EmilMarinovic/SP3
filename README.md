@@ -1,3 +1,13 @@
 # SP3
 
-Crime, Drama, Family, Romance og war er genre indenfor film og serier
+Emil,
+emma1001@stud.ek.dk
+
+Jayden, 
+jach1005@stud.ek.dk
+
+Talha,
+taca1000@stud.ek.dk
+
+Zacharias,
+zath1000@stud.ek.dk

@@ -1,61 +1,151 @@
 @startuml
 abstract Medie {
-String title
-double rating
-ArrayList<Genre> genres
-String year
-void searchMedie()
-void searchMedieInCategory()
+- String title
+- String year
+- ArrayList<Genre> genres
+- double raing
++ Medie(title, year, genres, rating)
++ String getTitle()
++ String getYear()
++ String getGenresFormatted()
++ double getRating()
 }
+
 class Movie {
++ Movie(title, year, genres, rating)
++ void play()
++ String toString()
 }
+
 class Series {
-ArrayList<Season> seasons
-ArrayList<Episode> episodes
+- ArrayList<Season> seasons
++ Series(title, year, genres, rating)
++ void addSeason()
++ ArrayList<Season> getSeasons()
++ String toString()
 }
+
 class Season {
-int numberOfEpisodes
+- int seasonNumber
+- int numberOfEpisodes
++ Season(seasonNumber, numberOfEpisodes)
++ void play()
++ Stirng toString()
 }
-class Episode {
-}
+
 class User {
 ArrayList<Medie> watchedMedie
 ArrayList<Medie> wishlist
 String username
 String password
-void showWatchedMedie()
-void showWishlist()
+
++ User(username, password, watchedMedie, wishlist)
++ User(username, password)
++ void showWatchedMedie()
++ void showWishlist()
++ void addToWatched()
++ void addToWishlist()
++ void String getUsername()
++ String getPassword()
++ String getWatchedMedieFormatted()
++ String getWishlistFormatted()
 }
+
+class StreamingService {
+- ArrayList<Medie> medias
+- ArrayList<User> users
+- User currentUser
++ void loadDataSeries()
++ void loadDataMovie()
++ void loadDataUser()
++ Medie findMedieTitle(title)
++ void createSeriesData(title, year, genres, rating, seasons)
++ void createMovieData(title, year, genres, rating)
++ void showStartMenu()
++ void createUser()
++ void login()
++ void showOptionMenu()
++ void searchByTitle()
++ void showResultsAndPick(results)
++ void playOrSave(medie)
++ void findUser(username)
++ void searchMedie()
++ void searchByCriteria(mediaType))
++ void searchByGenre(mediaType))
++ void searchByRating(mediaType))
++ void searchByRatingAbove(mediaType))
++ void searchRatingRange(mediaType))
++ void searchByYear(mediaType))
++ void searchByYearRange(mediaType))
++ void searchYearExact(mediaType))
+- boolean matchesMediaType(medie, mediaType)
++ void endSession()
+}
+
 enum Genre {
+ACTION
+ADVENTURE
+ANIMATION
+BIOGRAPHY
+COMEDY
 CRIME
-FAMILY
-WAR
+DOCUMENTARY
 DRAMA
+FAMILY
+FANTASY
+FILMNOIR
+HISTORY
+HORROR
+MUSIC
+MUSICAL
+MYSTERY
 ROMANCE
+SCIFI
+SPORT
+TALKSHOW
+THRILLER
+WAR
+WESTERN
 }
-class Main
+
+class Main {
+StreamingService s
+s.loadDataMovies()
+s.loadDataSeries()
+s.loadDataUser()
+s.showStartMenu()
+}
+
 interface Playable {
 void play()
 }
-class FileIO
-class TextUI
-class StreamingService {
-void createMovie()
-void createSeries()
+
+class FileIO {
++ ArrayList<String> readData(path(
++ void saveData(data, path, header)
 }
-
-
-
+class TextUI {
++ String promptText(msg)
++ void displayMessage(message)
++ int promptNumeric(msg)
+}
 
 
 Medie <|-- Movie
 Medie <|-- Series
+Medie *-- Genre
 
 Series *-- Season
-Season *-- Episode
 
 Playable <|.. Movie
-Playable <|.. Episode
+Playable <|.. Season
 
 StreamingService *-- Medie
+StreamingService o-- Genre
+StreamingService o-- User
+
+StreamingService o-- TextUI
+StreamingService o-- FileIO
+
+User o-- Medie
 @enduml

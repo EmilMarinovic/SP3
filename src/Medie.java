@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 
 public abstract class Medie {
-    private String title;
-    private String year;
-    private ArrayList<Genre> genres;
-    private double rating;
+    private final String title;
+    private final String year;
+    private final ArrayList<Genre> genres;
+    private final double rating;
 
     public Medie(String title, String year, ArrayList<Genre> genres, double rating) {
         this.title = title;
@@ -13,7 +13,6 @@ public abstract class Medie {
         this.rating = rating;
     }
 
-    //GETTERE/SETTERE:
     public String getTitle() {
         return title;
     }

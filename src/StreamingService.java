@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class StreamingService {
-    private ArrayList<Medie> medias = new ArrayList<>();
-    private ArrayList<User> users = new ArrayList<>();
+    private final ArrayList<Medie> medias = new ArrayList<>();
+    private final ArrayList<User> users = new ArrayList<>();
     private User currentUser;
     FileIO io = new FileIO();
     TextUI ui = new TextUI();
@@ -99,14 +99,14 @@ public class StreamingService {
                 ArrayList<Medie> wishlist = new ArrayList<>();
 
                 if (data.length > 2) {
-                    for (String g : data[2].split(",")) {
+                    for (String g : data[2].split("\\|")) {
                         Medie m = findMedieTitle(g.trim());
                         if (m != null) watchedMedie.add(m);
                     }
                 }
 
                 if (data.length > 3) {
-                    for (String g : data[3].split(",")) {
+                    for (String g : data[3].split("\\|")) {
                         Medie m = findMedieTitle(g.trim());
                         if (m != null) wishlist.add(m);
                     }
@@ -180,8 +180,6 @@ public class StreamingService {
         String password = ui.promptText("Type password:");
         users.add(new User(username, password));
         ui.displayMessage("\nUser created\n");
-
-        //Vi skal have en håndtering for at man ikke kan oprette en user med et username der allerede findes
     }
 
     public void logIn() {
@@ -233,6 +231,7 @@ public class StreamingService {
                     break;
                 case 0:
                     ui.displayMessage("Logging out");
+                    endSession();
                     isRunning = false;
                     break;
                 default:
@@ -242,42 +241,50 @@ public class StreamingService {
         }
     }
 
-    public void searchMovieByYear() {
-        String year = ui.promptText("Enter year:");
+    public void searchByTitle() {
+        String title = ui.promptText("Type title:");
+        Medie m = findMedieTitle(title);
 
-        boolean found = false;
-
-        for (Medie m : medias) {
-            if (m instanceof Movie && m.getYear().equals(year)) {
-                ui.displayMessage(m.toString());
-                found = true;
-            }
+        if (m == null) {
+            ui.displayMessage("Title not found");
+            return;
         }
 
-        if (!found) {
-            ui.displayMessage("No movies found from " + year);
-        }
+        playOrSave(m);
     }
 
-    public void searchMoviesByYearRange() {
-        int startYear = ui.promptNumeric("Enter start year:");
-        int endYear = ui.promptNumeric("Enter end year:");
-
-        boolean found = false;
-
-        for (Medie m : medias) {
-            if (m instanceof Movie) {
-                int movieYear = Integer.parseInt(m.getYear());
-
-                if (movieYear >= startYear && movieYear <= endYear) {
-                    ui.displayMessage(m.toString());
-                    found = true;
-                }
-            }
+    public void showResultsAndPick(ArrayList<Medie> results) {
+        if (results.isEmpty()) {
+            ui.displayMessage("No media found.");
+            return;
         }
 
-        if (!found) {
-            ui.displayMessage("No movies found in this period.");
+        for (int i = 0; i < results.size(); i++) {
+            ui.displayMessage((i + 1) + ". " + results.get(i));
+        }
+
+        int choice = ui.promptNumeric("Pick a number to add (0 = back):");
+        if (choice < 1 || choice > results.size()) return;
+
+        playOrSave(results.get(choice - 1));
+    }
+
+    public void playOrSave(Medie medie) {
+        ui.displayMessage("Would you like to play or save for later?");
+        ui.displayMessage("1. Play");
+        int input = ui.promptNumeric("2. Save");
+
+        switch (input) {
+            case 1:
+                ui.displayMessage(medie.getTitle() + " is now playing...");
+                currentUser.addToWatched(medie);
+                break;
+            case 2:
+                currentUser.addToWishlist(medie);
+                break;
+            default:
+                ui.displayMessage("Invalid choice");
+                break;
         }
     }
 
@@ -290,18 +297,6 @@ public class StreamingService {
         return null;   // ingen fundet
     }
 
-
-    /*public void displayAllSeries() {
-        for (Series s : series) {
-            System.out.println(s.toString());
-        }
-    }
-
-    public void displayAllMovies() {
-        for (Movie m : movies) {
-            System.out.println(m.toString());
-        }
-    }*/
 
     public void searchMedie() {
         ui.displayMessage("\n=== SEARCH ===");
@@ -333,22 +328,53 @@ public class StreamingService {
 
     public void searchByCriteria(String mediaType) {
         ui.displayMessage("\n=== SEARCH BY ===");
-        ui.displayMessage("1. Rating");
-        ui.displayMessage("2. Release year");
+        ui.displayMessage("1. Title");
+        ui.displayMessage("2. Genre");
+        ui.displayMessage("3. Rating");
+        ui.displayMessage("4. Release year");
 
         int input = ui.promptNumeric("Choose:");
 
         switch (input) {
             case 1:
-                searchByRating(mediaType);
+                searchByTitle();
                 break;
             case 2:
+                searchByGenre(mediaType);
+                break;
+            case 3:
+                searchByRating(mediaType);
+                break;
+            case 4:
                 searchByYear(mediaType);
                 break;
             default:
                 ui.displayMessage("Invalid choice");
                 break;
         }
+    }
+
+
+    public void searchByGenre(String mediaType) {
+        String genre = ui.promptText("Choose genre");
+
+        // "Sci-fi", "sci fi" og "scifi" giver alle "scifi"
+        String wanted = genre.trim().toLowerCase().replace("-", "").replace(" ", "");
+
+        ArrayList<Medie> results = new ArrayList<>();
+
+        for (Medie m : medias) {
+            if (!matchesMediaType(m, mediaType)) continue;
+
+            for (String g : m.getGenresFormatted().split(",")) {
+                if (g.trim().toLowerCase().equals(wanted)) {
+                    results.add(m);
+                    break;
+                }
+            }
+        }
+
+        showResultsAndPick(results);
     }
 
     public void searchByRating(String mediaType) {
@@ -376,19 +402,13 @@ public class StreamingService {
                 ui.promptText("Enter minimum rating:").replace(",", ".")
         );
 
-        boolean found = false;
-
+        ArrayList<Medie> results = new ArrayList<>();
         for (Medie m : medias) {
-            if (matchesMediaType(m, mediaType)
-                    && m.getRating() >= rating) {
-                ui.displayMessage(m.toString());
-                found = true;
+            if (matchesMediaType(m, mediaType) && m.getRating() >= rating) {
+                results.add(m);
             }
         }
-
-        if (!found) {
-            ui.displayMessage("No media found.");
-        }
+        showResultsAndPick(results);
     }
 
     public void searchRatingRange(String mediaType) {
@@ -400,20 +420,15 @@ public class StreamingService {
                 ui.promptText("Enter maximum rating:").replace(",", ".")
         );
 
-        boolean found = false;
-
+        ArrayList<Medie> results = new ArrayList<>();
         for (Medie m : medias) {
             if (matchesMediaType(m, mediaType)
                     && m.getRating() >= minRating
                     && m.getRating() <= maxRating) {
-                ui.displayMessage(m.toString());
-                found = true;
+                results.add(m);
             }
         }
-
-        if (!found) {
-            ui.displayMessage("No media found.");
-        }
+        showResultsAndPick(results);
     }
 
     public void searchByYear(String mediaType) {
@@ -439,19 +454,13 @@ public class StreamingService {
     public void searchYearExact(String mediaType) {
         String year = ui.promptText("Enter release year:");
 
-        boolean found = false;
-
+        ArrayList<Medie> results = new ArrayList<>();
         for (Medie m : medias) {
-            if (matchesMediaType(m, mediaType)
-                    && m.getYear().equals(year)) {
-                ui.displayMessage(m.toString());
-                found = true;
+            if (matchesMediaType(m, mediaType) && m.getYear().equals(year)) {
+                results.add(m);
             }
         }
-
-        if (!found) {
-            ui.displayMessage("No media found.");
-        }
+        showResultsAndPick(results);
     }
 
     public void searchYearRange(String mediaType) {
@@ -463,32 +472,28 @@ public class StreamingService {
                 ui.promptText("Enter ending year:")
         );
 
-        boolean found = false;
-
+        ArrayList<Medie> results = new ArrayList<>();
         for (Medie m : medias) {
             if (matchesMediaType(m, mediaType)) {
-                int year = Integer.parseInt(m.getYear());
+                // Serier har fx "1990-1991" eller "2011-", så vi bruger kun de første 4 tegn
+                int year = Integer.parseInt(m.getYear().trim().substring(0, 4));
 
                 if (year >= minYear && year <= maxYear) {
-                    ui.displayMessage(m.toString());
-                    found = true;
+                    results.add(m);
                 }
             }
         }
-
-        if (!found) {
-            ui.displayMessage("No media found.");
-        }
+        showResultsAndPick(results);
     }
 
-    private boolean matchesMediaType(Medie m, String mediaType) {
+    private boolean matchesMediaType(Medie medie, String mediaType) {
 
         switch (mediaType) {
             case "Movie":
-                return m instanceof Movie;
+                return medie instanceof Movie;
 
             case "Series":
-                return m instanceof Series;
+                return medie instanceof Series;
 
             case "All":
                 return true;
@@ -497,6 +502,7 @@ public class StreamingService {
                 return false;
         }
     }
+
 
     public void endSession() {
         ArrayList<String> data = new ArrayList<>();

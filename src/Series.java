@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class Series extends Medie {
-    private ArrayList<Season> seasons;
+    private final ArrayList<Season> seasons;
 
     public Series(String title, String year, ArrayList<Genre> genres, double rating) {
         super(title, year, genres, rating);
@@ -18,6 +18,7 @@ public class Series extends Medie {
 
     @Override
     public String toString() {
-        return getTitle() + " " + getYear() + " " + getGenresFormatted() + " " + getRating() + " " + getSeasons();
+        return getTitle() + " -- Release year: " + getYear() + " -- Genres: " +
+                getGenresFormatted() + " -- Rating: " + getRating() + " -- Seasons: " + getSeasons().size();
     }
 }

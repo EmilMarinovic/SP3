@@ -1,10 +1,11 @@
 import java.util.ArrayList;
 
 public class User {
-    private ArrayList<Medie> watchedMedie;
-    private ArrayList<Medie> wishlist;
-    private String username;
-    private String password;
+    private final ArrayList<Medie> watchedMedie;
+    private final ArrayList<Medie> wishlist;
+    private final String username;
+    private final String password;
+    TextUI ui = new TextUI();
 
     public User(String username, String password, ArrayList<Medie> watchedMedie, ArrayList<Medie> wishlist){
         this.username=username;
@@ -56,6 +57,24 @@ public class User {
         }
     }
 
+    public void addToWatched(Medie m) {
+        if (watchedMedie.contains(m)) {
+            System.out.println("Already in watched list");
+            return;
+        }
+        watchedMedie.add(m);
+        wishlist.remove(m);
+    }
+
+    public void addToWishlist(Medie m) {
+        if (watchedMedie.contains(m) || wishlist.contains(m)) {
+            System.out.println("Already in one of your lists");
+            return;
+        }
+        ui.displayMessage(m.getTitle() + " is added to wishlist");
+        wishlist.add(m);
+    }
+
     public String getUsername() {
         return username;
     }
@@ -67,8 +86,7 @@ public class User {
     public String getWatchedMedieFormatted() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < watchedMedie.size(); i++) {
-            String name = watchedMedie.get(i).getTitle();
-            sb.append(name.charAt(0)).append(name.substring(1).toLowerCase());
+            sb.append(watchedMedie.get(i).getTitle());
             if (i < watchedMedie.size() - 1) {
                 sb.append(", ");
             }
@@ -79,8 +97,7 @@ public class User {
     public String getWishlistFormatted() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < wishlist.size(); i++) {
-            String name = wishlist.get(i).getTitle();
-            sb.append(name.charAt(0)).append(name.substring(1).toLowerCase());
+            sb.append(wishlist.get(i).getTitle());
             if (i < wishlist.size() - 1) {
                 sb.append(", ");
             }
