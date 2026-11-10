@@ -31,7 +31,11 @@ usecase "Year range" as UC26
 usecase "Choose media" as UC27
 usecase "Play" as UC28
 usecase "Save" as UC29
+usecase "Remove" as UC30
 }
+UC30 --> UC13
+UC6 --> UC30
+UC6 --> UC28
 UC19 --> UC27
 UC20 --> UC27
 UC23 --> UC27
