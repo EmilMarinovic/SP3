@@ -227,7 +227,7 @@ public class StreamingService {
                     currentUser.showWatchedMedie();
                     break;
                 case 3:
-                    currentUser.showWishlist();
+                    showResultsAndPick(new ArrayList<>(currentUser.getWishlist()), true);
                     break;
                 case 0:
                     ui.displayMessage("Logging out");
@@ -241,11 +241,11 @@ public class StreamingService {
         }
     }
 
-    public void searchByTitle() {
+    public void searchByTitle(String mediaType) {
         String title = ui.promptText("Type title:");
         Medie m = findMedieTitle(title);
 
-        if (m == null) {
+        if (m == null || !matchesMediaType(m, mediaType)) {
             ui.displayMessage("Title not found");
             return;
         }
@@ -254,6 +254,10 @@ public class StreamingService {
     }
 
     public void showResultsAndPick(ArrayList<Medie> results) {
+        showResultsAndPick(results, false);
+    }
+
+    public void showResultsAndPick(ArrayList<Medie> results, boolean fromWishlist) {
         if (results.isEmpty()) {
             ui.displayMessage("No media found.");
             return;
@@ -263,10 +267,16 @@ public class StreamingService {
             ui.displayMessage((i + 1) + ". " + results.get(i));
         }
 
-        int choice = ui.promptNumeric("Pick a number to add (0 = back):");
+        int choice = ui.promptNumeric("Pick a number (0 = back):");
         if (choice < 1 || choice > results.size()) return;
 
-        playOrSave(results.get(choice - 1));
+        Medie picked = results.get(choice - 1);
+
+        if (fromWishlist) {
+            playOrRemove(picked);
+        } else {
+            playOrSave(picked);
+        }
     }
 
     public void playOrSave(Medie medie) {
@@ -281,6 +291,26 @@ public class StreamingService {
                 break;
             case 2:
                 currentUser.addToWishlist(medie);
+                break;
+            default:
+                ui.displayMessage("Invalid choice");
+                break;
+        }
+    }
+
+    public void playOrRemove(Medie medie) {
+        ui.displayMessage("Would you like to play or remove from wishlist?");
+        ui.displayMessage("1. Play");
+        int input = ui.promptNumeric("2. Remove");
+
+        switch (input) {
+            case 1:
+                ui.displayMessage(medie.getTitle() + " is now playing...");
+                currentUser.addToWatched(medie);
+                break;
+            case 2:
+                ui.displayMessage(medie.getTitle() + " has been removed from your wishlist");
+                currentUser.removeFromWishlist(medie);
                 break;
             default:
                 ui.displayMessage("Invalid choice");
@@ -337,7 +367,7 @@ public class StreamingService {
 
         switch (input) {
             case 1:
-                searchByTitle();
+                searchByTitle(mediaType);
                 break;
             case 2:
                 searchByGenre(mediaType);

@@ -39,22 +39,8 @@ public class User {
         }
     }
 
-    public void showWishlist(){
-        if (wishlist.isEmpty()) {
-            System.out.println("The list is empty...");
-        }
-        for (Medie m : wishlist) {
-            if (m instanceof Series) {
-                System.out.print("Series: ");
-            } else {
-                System.out.print("Movie: ");
-            }
-            System.out.print(m.getTitle() + " -- Release year: " + m.getYear() + " -- Genres: " +
-                    m.getGenresFormatted() + " -- Rating: " + m.getRating());
-            if (m instanceof Series s) {
-                System.out.println(" -- Seasons: " + s.getSeasons().size());
-            } else System.out.println();
-        }
+    public ArrayList<Medie> getWishlist() {
+        return wishlist;
     }
 
     public void addToWatched(Medie m) {
@@ -73,6 +59,10 @@ public class User {
         }
         ui.displayMessage(m.getTitle() + " is added to wishlist");
         wishlist.add(m);
+    }
+
+    public void removeFromWishlist(Medie medie) {
+        wishlist.remove(medie);
     }
 
     public String getUsername() {
