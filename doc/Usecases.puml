@@ -11,37 +11,64 @@ package "Streaming Service" {
 usecase "Opret bruger" as UC1
 usecase "Log ind" as UC2
 usecase "Søg efter bestemt film" as UC3
-usecase "Søg alle film i kategori" as UC4
 usecase "Se liste over sete film" as UC5
 usecase "Se liste over gemte film" as UC6
-usecase "Vælg film" as UC7
-usecase "Afspil film" as UC8
-usecase "Gem film" as UC9
-usecase "Slet gemt film" as UC10
 usecase "startMenu" as UC12
 usecase "mainMenu" as UC13
+usecase "Close program" as UC14
+usecase "Movie" as UC15
+usecase "Series" as UC16
+usecase "Movie/Series" as UC17
+usecase "Seach by" as UC18
+usecase "Title" as UC19
+usecase "Genre" as UC20
+usecase "Rating" as UC21
+usecase "Release year" as UC22
+usecase "Rating at/above" as UC23
+usecase "Rating in range of" as UC24
+usecase "Year exact" as UC25
+usecase "Year range" as UC26
+usecase "Choose media" as UC27
+usecase "Play" as UC28
+usecase "Save" as UC29
 }
+UC19 --> UC27
+UC20 --> UC27
+UC23 --> UC27
+UC24 --> UC27
+UC25 --> UC27
+UC26 --> UC27
+UC27 --> UC28
+UC27 --> UC29
+UC28 --> UC13
+UC29 --> UC13
 
 
 
 user --> UC12
-UC1 --> UC2
 UC2 --> UC13
-UC3 --> UC7
-UC4 --> UC7
-UC5 --> UC7
-UC6 --> UC7
-UC6 --> UC10
-UC7 --> UC8
-UC7 --> UC9
-UC8 --> UC9
-UC9 --> UC7
-UC9 --> UC13
-UC10 --> UC6
+UC3 --> UC15
+UC3 --> UC16
+UC3 --> UC17
+UC16 --> UC18
+UC15 --> UC18
+UC17 --> UC18
+UC18 --> UC19
+UC18 --> UC20
+UC18 --> UC21
+UC18 --> UC22
+UC5 --> UC13
+UC6 --> UC13
 UC12 --> UC1
 UC12 --> UC2
 UC13 --> UC3
-UC13 --> UC4
 UC13 --> UC5
 UC13 --> UC6
+UC12 --> UC14
+UC1 --> UC12
+UC13 --> UC12
+UC21 --> UC23
+UC21 --> UC24
+UC22 --> UC25
+UC22 --> UC26
 @enduml

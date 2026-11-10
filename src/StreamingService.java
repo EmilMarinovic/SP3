@@ -99,14 +99,14 @@ public class StreamingService {
                 ArrayList<Medie> wishlist = new ArrayList<>();
 
                 if (data.length > 2) {
-                    for (String g : data[2].split("\\|")) {
+                    for (String g : data[2].split(", ")) {
                         Medie m = findMedieTitle(g.trim());
                         if (m != null) watchedMedie.add(m);
                     }
                 }
 
                 if (data.length > 3) {
-                    for (String g : data[3].split("\\|")) {
+                    for (String g : data[3].split(", ")) {
                         Medie m = findMedieTitle(g.trim());
                         if (m != null) wishlist.add(m);
                     }
