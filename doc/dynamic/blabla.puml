@@ -2,12 +2,13 @@
 title Streaming: opstart, login, søgning, lister og log ud
 
 actor "Bruger" as B
-participant "m : Main" as Main
-participant "s : StreamingService" as SS
-participant "ui : TextUI" as UI
-participant "io : FileIO" as IO
-participant "u : User" as U
-participant ": Movie / Series" as Med
+participant "Main" as Main
+participant "StreamingService" as SS
+participant "TextUI" as UI
+participant "FileIO" as IO
+participant "User" as U
+participant "Movie / Series" as Med
+
 
 == Opstart ==
 Main -> SS : loadDataMovies()
@@ -61,6 +62,14 @@ else 2 (Log in)
         end
         SS -> SS : currentUser = user, showOptionMenu()
     end
+else 0 (Close)
+SS -> SS : endSession()
+loop for hver User
+    SS -> U : getUsername(), getPassword()
+    SS -> U : getWatchedMedieFormatted()
+    SS -> U : getWishlistFormatted()
+end
+SS -> IO : saveData(data, "data/userdata.csv", header)
 end
 
 == Hovedmenu ==
@@ -119,16 +128,14 @@ else 3 (Show wishlist)
         SS -> UI : displayMessage("... has been removed from your wishlist")
         SS -> U : removeFromWishlist(medie)
     end
+else 0 (Log out)
+    SS -> SS : endSession()
+    loop for hver User
+        SS -> U : getUsername(), getPassword()
+        SS -> U : getWatchedMedieFormatted()
+        SS -> U : getWishlistFormatted()
+    end
+    SS -> IO : saveData(data, "data/userdata.csv", header)
+    SS -> SS: showStartMenu()
 end
-
-== Log ud ==
-SS -> UI : promptNumeric("Choose:")
-UI --> SS : 0 (Log out)
-SS -> SS : endSession()
-loop for hver User
-    SS -> U : getUsername(), getPassword()
-    SS -> U : getWatchedMedieFormatted()
-    SS -> U : getWishlistFormatted()
-end
-SS -> IO : saveData(data, "data/userdata.csv", header)
 @enduml

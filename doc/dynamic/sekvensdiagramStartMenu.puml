@@ -1,0 +1,44 @@
+@startuml
+title Start menu
+actor "Bruger" as B
+participant "StreamingService" as SS
+participant "TextUI" as UI
+participant "FileIO" as IO
+participant "User" as U
+
+SS -> UI : promptNumeric("Choose:")
+UI -> B : 1. Create user / 2. Log in / 0. Close
+B --> UI : valg
+UI --> SS : valg
+
+alt 1 (Create user)
+    SS -> UI : promptText("Type username:") / promptText("Type password:")
+    UI --> SS : navn, kode
+    SS -> U : new User(navn, kode)
+else 2 (Log in)
+    SS -> SS : logIn()
+    SS -> UI : promptText("Type username")
+    UI --> SS : brugernavn
+    SS -> SS : findUser(brugernavn)
+    alt bruger findes ikke
+        SS -> UI : displayMessage("User does not exist!")
+    else bruger findes
+        loop indtil kode er rigtig
+            SS -> UI : promptText("Type password")
+            UI --> SS : kode
+            SS -> U : getPassword()
+            U --> SS : kode
+        end
+        SS -> SS : currentUser = user, showOptionMenu()
+    end
+else 0 (Close)
+SS -> SS : endSession()
+loop for hver User
+    SS -> U : getUsername(), getPassword()
+    SS -> U : getWatchedMedieFormatted()
+    SS -> U : getWishlistFormatted()
+end
+SS -> IO : saveData(data, "data/userdata.csv", header)
+end
+
+@enduml

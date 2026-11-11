@@ -1,0 +1,78 @@
+@startuml
+title Hoved menu
+actor "Bruger" as B
+participant "Main" as Main
+participant "StreamingService" as SS
+participant "TextUI" as UI
+participant "FileIO" as IO
+participant "User" as U
+participant "Movie / Series" as Med
+
+SS -> UI : promptNumeric("Choose:")
+UI -> B : 1. Search / 2. Show watched list / 3. Show wishlist / 0. Log out
+B --> UI : valg
+UI --> SS : valg
+
+alt 1 (Search)
+    SS -> SS : searchMedie() (Movie / Series / begge)
+    SS -> SS : searchByCriteria(mediaType)
+
+    alt Title
+        SS -> UI : promptText("Type title:")
+        UI --> SS : titel
+        SS -> SS : findMedieTitle(titel), matchesMediaType()
+        SS -> SS : playOrSave(medie)
+    else Genre / Rating / Release year
+        SS -> UI : promptText(...) / promptNumeric(...)
+        UI --> SS : søgeværdi
+        loop for hver Medie i medias
+            SS -> Med : getGenresFormatted() / getRating() / getYear()
+            Med --> SS : værdi
+        end
+        SS -> SS : showResultsAndPick(results)
+        SS -> UI : displayMessage(nummereret liste)
+        SS -> UI : promptNumeric("Pick a number (0 = back)")
+        UI --> SS : nummer
+        SS -> SS : playOrSave(medie)
+    end
+
+    SS -> UI : promptNumeric("1. Play / 2. Save")
+    UI --> SS : valg
+    alt Play
+        SS -> UI : displayMessage(titel + " is now playing...")
+        SS -> U : addToWatched(medie)
+    else Save
+        SS -> U : addToWishlist(medie)
+    end
+
+else 2 (Show watched list)
+    SS -> U : showWatchedMedie()
+
+else 3 (Show wishlist)
+    SS -> U : getWishlist()
+    U --> SS : wishlist
+    SS -> SS : showResultsAndPick(kopi af wishlist, true)
+    SS -> UI : displayMessage(nummereret liste)
+    SS -> UI : promptNumeric("Pick a number (0 = back)")
+    UI --> SS : nummer
+    SS -> SS : playOrRemove(medie)
+    SS -> UI : promptNumeric("1. Play / 2. Remove")
+    UI --> SS : valg
+    alt Play
+        SS -> UI : displayMessage(titel + " is now playing...")
+        SS -> U : addToWatched(medie)
+    else Remove
+        SS -> UI : displayMessage("... has been removed from your wishlist")
+        SS -> U : removeFromWishlist(medie)
+    end
+else 0 (Log out)
+    SS -> SS : endSession()
+    loop for hver User
+        SS -> U : getUsername(), getPassword()
+        SS -> U : getWatchedMedieFormatted()
+        SS -> U : getWishlistFormatted()
+    end
+    SS -> IO : saveData(data, "data/userdata.csv", header)
+    SS -> SS: showStartMenu()
+end
+@enduml

@@ -1,0 +1,33 @@
+@startuml
+title Opstart af program
+participant "Main" as Main
+participant "StreamingService" as SS
+participant "FileIO" as IO
+participant "User" as U
+participant "Movie / Series" as Med
+
+Main -> SS : loadDataMovies()
+SS -> IO : readData("data/moviesdata.csv")
+IO --> SS : lines
+loop for hver linje
+    SS -> Med : new Movie(titel, år, genrer, rating)
+end
+
+Main -> SS : loadDataSeries()
+SS -> IO : readData("data/seriesdata.csv")
+IO --> SS : lines
+loop for hver linje
+    SS -> Med : new Series(titel, år, genrer, rating)
+    SS -> Med : addSeason(new Season(nr, antal))
+end
+
+Main -> SS : loadDataUser()
+SS -> IO : readData("data/userdata.csv")
+IO --> SS : lines
+loop for hver linje
+    SS -> SS : findMedieTitle(titel)
+    SS -> U : new User(navn, kode, watched, wishlist)
+end
+
+Main -> SS : showStartMenu()
+@enduml
